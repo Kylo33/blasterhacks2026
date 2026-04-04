@@ -3,7 +3,7 @@ Program
 
 Table
 	= "{" _ "}" { return []; }
-    / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[2]))} : firstDcl; }
+    / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[3]))} : firstDcl; }
 
 TablePairDcl
 	= id:Identifier _ ":" _ expr:Expression { let tab = {}; tab[id] = expr; return tab; }
