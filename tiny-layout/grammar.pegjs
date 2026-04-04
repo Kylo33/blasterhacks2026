@@ -133,7 +133,18 @@ EscapeSequence
   / "t"  { return "\t"; }
   
 Stmts
-	= Stmt|0..,_|
+	= stmts:StmtOption|0..,_| { return stmts.filter(item => item != undefined); }
+
+StmtOption
+	= Stmt
+    / Comment
+
+Comment
+	= _ "//" [^\n]* EndLine { return undefined; }
+    
+EndLine
+	= "\n"
+    / !.
 
 Stmt
     = x:Paint _ ";" {return x;}
@@ -162,5 +173,6 @@ If
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
 __ "mandatory whitespace" = [ \t\n\r]+
+
 
 
