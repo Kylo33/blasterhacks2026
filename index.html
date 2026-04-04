@@ -6,7 +6,8 @@
         <title>Document</title>
     </head>
     <body>
-        <svg-thing>
+        <div id="layout-frame"></div>
+        <tiny-layout overwrite="layout-frame">
             shape arrow {
                 src: { x: float, y: float, },
                 dst: { x: float, y: float, },
@@ -23,6 +24,6 @@
             };
 
             draw a;
-        </svg-thing>
+        </tiny-layout>
     </body>
 </html>
