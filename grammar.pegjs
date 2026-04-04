@@ -1,15 +1,15 @@
 Program
-	= Stmts
+	= TruthLogicExpr
 
 Table
-	= "{" _ "}" { return []; }
+	= "{" _ "}" { return {}; }
     / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[3]))} : firstDcl; }
 
 TablePairDcl
 	= id:Identifier _ ":" _ expr:Expression { let tab = {}; tab[id] = expr; return tab; }
 
 TableTypeDef
-	= "{" _ "}" { return []; }
+	= "{" _ "}" { return {}; }
     / "{" _ firstDcl:TableTypePairDcl _ restDcls:("," _ TableTypePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[2]))} : firstDcl; }
 
 TableTypePairDcl
@@ -27,13 +27,34 @@ Type "type"
     / "truth"
 
 Identifier "identifier"
-	= color:[a-zA-Z_]+ { return color.join(''); }
+	= name:[a-zA-Z_]+ { return name.join(''); }
     
 Expression "expression"
-	= Comparison
+	= TruthLogicExpr
+    
+TruthLogicExpr
+	= first:Negation rest:(__ TruthOperator __ Negation)* {
+    	if (!rest.length) return first;
+        let ans = first;
+        for(let i = 0; i < rest.length; i++) {
+        	ans = [rest[i][1], ans, rest[i][3]];
+        }
+        return ans;
+    }
+
+TruthOperator
+	= "and"
+    / "or"
+
+Negation
+	= "not" __ rest:Comparison { return ["not", rest] }
+    / Comparison
     
 Comparison
-	= Sum (_ CmpOperator _ Sum)?
+	= first:Sum rest:(_ CmpOperator _ Sum)? {
+    	if (!rest) return first;
+        return [rest[1], first, rest[3]];
+    }
 
 CmpOperator
 	= ">="
@@ -44,22 +65,36 @@ CmpOperator
     / "!="
 
 Sum "sum"
-	= Product _ ([+-] _ Product)*
+	= first:Product rest:(_ [+-] _ Product)* {
+    	if (!rest.length) return first;
+        let ans = first;
+        for(let i = 0; i < rest.length; i++) {
+        	ans = [rest[i][1], ans, rest[i][3]];
+        }
+        return ans;
+    }
 
 Product "product"
-	= ExprAtom _ ([*/] _ ExprAtom)*
+	= first:ExprAtom rest:(_ [*/] _ ExprAtom)* {
+    	if (!rest.length) return first;
+        let ans = first;
+        for(let i = 0; i < rest.length; i++) {
+        	ans = [rest[i][1], ans, rest[i][3]];
+        }
+        return ans;
+    }
 
 ExprAtom "expression atom"
     = FunctCall
-	/ Color
-    / Number
-    / String
-    / Array
-    / Funct
-    / Table
-    / Identifier
-    / Truth
-    / "(" _ Expression _ ")"
+	/ x:Color { return {type: "color", value: x}; }
+    / x:Number { return {type: "numba", value: x}; }
+    / x:String { return {type: "strin", value: x}; }
+    / x:Array { return {type: "array", value: x}; }
+    / x:Funct { return {type: "funct", value: x}; }
+    / x:Table { return {type: "table", value: x}; }
+    / x:Identifier { return {type: "identifier", value: x}; }
+    / x:Truth { return {type: "truth", value: x}; }
+    / "(" _ expr: Expression _ ")" { return expr; }
     / "zilch"
 
 Color
@@ -110,7 +145,7 @@ Paint
 	= "paint" __ Expression
 
 Assignment
-	= Identifier _ (":" _ Type _)? "=" _ Expression
+	= "have" __ Identifier _ (":" _ Type _)? "=" _ Expression
 
 Return
 	= "return" __ Expression
