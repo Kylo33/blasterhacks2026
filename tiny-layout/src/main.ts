@@ -1,34 +1,51 @@
-import { parse } from "./parser.js";
-import type { Program } from "./types.js";
+import "@fontsource/libre-baskerville";
+import * as monaco from 'monaco-editor';
 
-class TinyLayout extends HTMLElement {
-    #shadow!: ShadowRoot;
-    #pt!: HTMLParagraphElement;
+const defaultCode = `
+// "have" defines a variable.
+have a = 5;
+have b = 10;
 
-    constructor() {
-        super();
-    }
 
-    connectedCallback() {
-        this.#shadow = this.attachShadow({ mode: "open" })
-        this.#shadow.appendChild(this.#pt)
+// paint lets you draw a shape
+paint circle {
+        x: a,
+        y: b,
+        style: {
+                // Colors are types too!
+                fill: #01796f,
+        },
+};
 
-        const text = this.textContent!.trim();
-        this.setCode(text)
-    }
 
-    setCode(code: string) {
-        this.textContent = code;
-        const ast = parse(code);
-        console.log(ast)
-    }
-}
+// functions are values too
+have hat = {fill: color} -> shape {
+        return group {
+                body: [
+                        rect {
+                                x: 10,
+                                y: 10,
+                                width: 10,
+                                height: 20,
+                        },
+                        rect {
+                                x: 0,
+                                y: 20,
+                                width: 30,
+                                height: 5,
+                        },
+                ],
+        };
+};
+`
 
-customElements.define("tiny-layout", TinyLayout);
-
-const tl: TinyLayout = document.querySelector("tiny-layout")!
-document.querySelector("#codeInput")?.addEventListener("input", () => {
-    const elem: HTMLTextAreaElement = document.querySelector("#codeInput")!
-    const code = elem.value;
-    tl.setCode(code);
+const editor = monaco.editor.create(document.getElementById('container')!, {
+    value: defaultCode.trim(),
+    theme: 'vs-light',
+    minimap: { enabled: false },
+    tabSize: 8,
+    insertSpaces: true,
+    padding: { top: 16, bottom: 16 },
 })
+
+editor.getModel()!.updateOptions({ tabSize: 8 });

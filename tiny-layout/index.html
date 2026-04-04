@@ -9,29 +9,83 @@
     <link rel="stylesheet" href="src/style.css">
 </head>
 
-<body class="max-w-3xl mx-auto py-8">
+<body class="max-w-3xl mx-auto">
     <header>
-        <h1 class="font-bold text-5xl">Tiny Layout</h1>
-        <p class="mt-4">Renn & Edna</p>
+        <h1 class="my-16 text-center font-bold text-5xl font-serif text-pine-green">Tiny Layout</h1>
     </header>
-    <main class="mt-2">
-        <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. At iusto modi, maxime dolorem rem labore iste
-            quam! Exercitationem rerum nisi suscipit reprehenderit hic quibusdam porro sed? Suscipit rerum quasi, natus
-            necessitatibus nemo, fuga explicabo voluptates consequuntur perspiciatis ullam, dignissimos officiis minima
-            tempora temporibus optio eaque adipisci magni ab repellat pariatur.
-        </p>
-        <div class="mt-4 grid grid-cols-2 gap-4 h-100">
-            <div class="border border-black/10 rounded-md">
-                <textarea class="h-full w-full" id="codeInput">
-                </textarea>
+    <main class="my-6">
+        <section>
+            <p>
+                Tiny Layout is a tool designed to make it <em>easy</em> to create
+                interactive diagrams for education, based on SVG. Using a custom domain-specific
+                language, you can easily define shapes and functions to make it easy to create
+                diagrams quickly.
+            </p>
+        </section>
+        <section class="mt-12">
+            <h2 class="text-pine-green text-3xl font-bold font-serif">Demo</h2>
+            <div class="grid grid-cols-2 gap-4 mt-4 h-96">
+                <div id="container" class="shadow-md rounded-2xl border border-gray-200 overflow-hidden"> </div>
+                <div class="shadow-md rounded-2xl border border-gray-200 overflow-hidden"></div>
             </div>
-            <div class="border border-black/10 rounded-md">
-                <tiny-layout>
-                </tiny-layout>
-            </div>
-        </div>
+        </section>
+        <section class="mt-12">
+            <h2 class="text-pine-green text-3xl font-bold font-serif" id="concepts">Concepts</h2>
+            <p class="mt-4">
+                Tiny Layout is <em>intentionally</em> small, so that it is easy to learn, and
+                difficult to forget. To help you get started, there are a couple concepts that will be helpful.
+            </p>
+            <ol class="list-decimal mt-4 pl-6 space-y-2">
+                <li>
+                    All functions in Tiny Layout take just one argument, of the type <tt
+                        class="font-normal font-mono text-pine-green">table</tt>. These functions are anonymous,
+                    so they can freely be passed as elements in tables ("arguments") to other functions.
+                </li>
+                <li>
+                    The only compound types are tables and arrays; if you want to represent a point,
+                </li>
+            </ol>
+        </section>
+        <section class="mt-12">
+            <h2 class="text-pine-green text-3xl font-bold font-serif" id="types">Types</h2>
+            <p class="mt-4">
+                To be comprehensive, here is a list of all possible types in Tiny Layout, along with a description
+                of what they represent. For fun, each type is exactly five characters, which is why some of them have
+                silly names!
+            </p>
+            <ol class="list-decimal mt-4 pl-6 space-y-2">
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">numba</tt> represents Tiny Layout's number type;
+                    this includes both integers and floating point numbers. Numbers must be specified in decimal; there
+                    is no support for hex, octal, or binary.
+                </li>
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">truth</tt> is Tiny Layout's boolean type, which
+                    can take on the values <tt class="font-normal font-mono text-pine-green">true</tt> and <tt
+                        class="font-normal font-mono text-pine-green">false</tt>.
+                </li>
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">strin</tt> is the string type, which has support
+                    for the most common escape characters.
+                </li>
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">table</tt> is used as Tiny Layout's hash table
+                    type. As noted in the <a href="#concepts"
+                        class="text-pine-green hover:underline transition-all duration-150">concepts section</a>, this
+                    is the only argument that can be passed to a function, and it is also used to represent more
+                    complicated data types.
+                </li>
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">funct</tt> is Tiny Layout's function type, which
+                    can only be created as an anonymous function.
+                </li>
+                <li>
+                    <tt class="font-normal font-mono text-pine-green">zilch</tt> is Tiny Layout's void, or nil type.
+                </li>
+            </ol>
+        </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
 </body>
+
 </html>

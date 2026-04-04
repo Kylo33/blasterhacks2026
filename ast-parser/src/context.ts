@@ -1,4 +1,4 @@
-import "./types.js"
+import "./types.ts"
 
 class Context {
     #table!: Map<string, Varia>
