@@ -15,7 +15,7 @@ TableTypeDef
 TableTypePairDcl
 	= id:Identifier _ ":" _ type:Type {let tab = {}; tab[id] = type; return tab; }
     
-Type
+Type "type"
 	= "color"
     / "numba"
     / "array"
@@ -23,12 +23,12 @@ Type
     / "funct"
     / "shape"
     / "strin"
-    / "nil"
+    / "zilch"
 
 Identifier "identifier"
 	= color:[a-zA-Z_]+ { return color.join(''); }
     
-Expression
+Expression "expression"
     = FunctCall
 	/ Color
     / Number
@@ -37,7 +37,7 @@ Expression
     / Funct
     / Table
     / Identifier
-    / "nil"
+    / "zilch"
 
 Color
 	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
