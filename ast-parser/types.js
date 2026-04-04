@@ -1,3 +1,12 @@
+class Varia {
+  constructor(val) {
+    this.val = val;
+  }
+  run() {
+    return this.val.run();
+  }
+}
+
 class Funct {
   constructor(args, ast, context) {
     this.args = args;
@@ -36,32 +45,15 @@ class Assign {
   }
 }
 
-class Return {
-  constructor(val) {
-    this.val = val;
-  }
-  run() {
-    return this.val.run();
-  }
-}
+class Return extends Varia {}
 
-class Numba {
-  constructor(val) {
-    this.val = val;
-  }
-  run() { return this.val; }
-}
+class Numba extends Varia {}
 
-class Color {
-  constructor(color) {
-    this.color = color;
-  }
-  run() {
-    return this.val;
-  }
-}
+class Booli extends Varia {}
 
-class Group {
+class Color extends Varia {}
+
+class Group extends Varia {
   constructor() {
     this.shapes = [];
   }
@@ -76,28 +68,23 @@ class Group {
   }
 }
 
-class Array {
+class Array extends Varia {
   constructor(array) {
     this.array = array;
   }
   run() {}
 }
 
-class Table {
+class Table extends Varia {
   constructor(table) {
     this.table = table;
   }
   run() {}
 }
 
-class Strin {
-  constructor(val) {
-    this.val = val;
-  }
-  run() { return this.val };
-}
+class Strin extends Varia {}
 
-class Zilch {
+class Zilch extends Varia {
   constructor() {}
   run() {}
 }
