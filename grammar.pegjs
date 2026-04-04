@@ -37,6 +37,7 @@ Expression
     / Funct
     / Table
     / Identifier
+    / "nil"
 
 Color
 	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
@@ -67,8 +68,9 @@ Stmts
 	= (_ Stmt)*
 
 Stmt
-    = Paint
-    / Assignment
+    = Paint _ ";"
+    / Assignment _ ";"
+    / Return _ ";"
   
 Funct
 	= TableTypeDef _ "->" _ Type _ "{"  __ (Stmts __)? "}"
@@ -77,11 +79,15 @@ FunctCall
 	= Identifier _ Table
     
 Paint
-	= "paint" __ Expression _ ";"
+	= "paint" __ Expression
 
 Assignment
-	= "let" __ Identifier _ (":" _ Type _)? "=" _ Expression _ ";"
+	= "let" __ Identifier _ (":" _ Type _)? "=" _ Expression
+
+Return
+	= "return" __ Expression
 
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
 __ "mandatory whitespace" = [ \t\n\r]+
+
