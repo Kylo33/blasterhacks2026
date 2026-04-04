@@ -8,14 +8,8 @@
     <body>
         <svg-thing>
             shape arrow {
-                src: {
-                    x: float,
-                    y: float,
-                },
-                dst: {
-                    x: float,
-                    y: float,
-                },
+                src: { x: float, y: float, },
+                dst: { x: float, y: float, },
             }: {
                 draw line {
                     src: src,
@@ -24,14 +18,8 @@
             }
 
             var a = arrow {
-                src: {
-                    x: 10.0,
-                    y: 12.0,
-                },
-                dst: {
-                    x: 100.0,
-                    y: 100.0,
-                },
+                src: { x: 10.0, y: 12.0, },
+                dst: { x: 100.0, y: 100.0, },
             };
 
             draw a;

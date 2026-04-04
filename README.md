@@ -6,58 +6,38 @@ diagrams quickly.
 
 ## Types
 
+- `int`
+- `float`
+- `funct`
+- `shape`
+- `array`
+- `table`
+- `color`
+- `string`
+
 ## Example Program
 
 ```
-// Draw a rectangle with a circle in it
-draw rectangle {
-    x: 0.0,
-    y: 0.0,
-    width: 100.0,
-    height: 100.0,
-    style: {
-        fill: #ff0000,
-    },
-    body: [
-        circle {
-            x: 0.0,
-            y: 0.0,
-            radius: 100.0,
-            style: {
-                fill: #00ff00,
-            }
-        },
-    ],
-};
+funct rotate { s: shape, angle: float } do
+    paint group {
+        rotate: angle,
+        body: [
+            s,
+        ],
+    };
+end
 
-draw myRectangle;
-```
-
-- All arguments should be passed as dictionaries, which can be
-  nested and destructured.
-
-```
-shape Arrow (
+shape arrow {
     src: {x: float, y: float},
     dst: {x: float, y: float},
-) {
-    draw Rectangle(
-        x: 0.0,
-        y: 0.0,
-        width: 10.0,
-        height: 10.0,
-    );
-}
-```
+} do
+    paint line {
+        src: src,
+        dst: dst,
+    };
+end
 
-## More Ideas
-
-```
-shape arrow {
-    
-}
-
-var a = arrow {
+let a = arrow {
     src: {
         x: 10.0,
         y: 12.0,
@@ -67,8 +47,6 @@ var a = arrow {
         y: 100.0,
     },
 };
+
+paint a;
 ```
-
-
-
-
