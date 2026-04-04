@@ -37,6 +37,10 @@ have hat = {fill: color} -> shape {
                 ],
         };
 };
+
+draw hat {
+        fill: #fc0;
+};
 `
 
 const editor = monaco.editor.create(document.getElementById('container')!, {
