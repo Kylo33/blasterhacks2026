@@ -20,6 +20,7 @@ class TinyLayout extends HTMLElement {
     setCode(code: string) {
         this.textContent = code;
         const ast = parse(code);
+        console.log(ast)
     }
 }
 
