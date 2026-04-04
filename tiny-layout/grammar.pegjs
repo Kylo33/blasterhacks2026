@@ -1,5 +1,5 @@
 Program
-	= stmts:Stmts _ { return stmts; }
+	= _ stmts:Stmts _ { return stmts; }
 
 Table
 	= "{" _ "}" { return {}; }
@@ -101,15 +101,15 @@ ExprAtom "expression atom"
     / x:Identifier { return {type: "identifier", value: x}; }
     / x:Truth { return {type: "truth", value: x}; }
     / "(" _ expr: Expression _ ")" { return expr; }
-    / "zilch"
+    / "zilch" {return {type: "zilch", value: "zilch"}}
 
 Color
 	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
 	/ "#" color:HexDigit|3| { return `#${color[0]}${color[0]}${color[1]}${color[1]}${color[2]}${color[2]}`; }
 
 Truth
-	= "true"
-    / "false"
+	= "true" {return true;}
+    / "false" {return false;}
 
 Number
 	= int:[0-9] + decimal:("." [0-9]+)? { return decimal === null ? parseFloat(`${int.join("")}`) : parseFloat(`${int.join("")}.${decimal[1].join("")}`); }
