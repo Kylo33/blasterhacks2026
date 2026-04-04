@@ -24,11 +24,32 @@ Type "type"
     / "shape"
     / "strin"
     / "zilch"
+    / "truth"
 
 Identifier "identifier"
 	= color:[a-zA-Z_]+ { return color.join(''); }
     
 Expression "expression"
+	= Comparison
+    
+Comparison
+	= Sum (_ CmpOperator _ Sum)?
+
+CmpOperator
+	= ">="
+    / "<="
+    / "<"
+    / ">"
+    / "=="
+    / "!="
+
+Sum "sum"
+	= Product _ ([+-] _ Product)*
+
+Product "product"
+	= ExprAtom _ ([*/] _ ExprAtom)*
+
+ExprAtom "expression atom"
     = FunctCall
 	/ Color
     / Number
@@ -37,11 +58,17 @@ Expression "expression"
     / Funct
     / Table
     / Identifier
+    / Truth
+    / "(" _ Expression _ ")"
     / "zilch"
 
 Color
 	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
 	/ "#" color:HexDigit|3| { return `#${color[0]}${color[0]}${color[1]}${color[1]}${color[2]}${color[2]}`; }
+
+Truth
+	= "true"
+    / "false"
 
 Number
 	= int:[0-9] + decimal:("." [0-9]+)? { return decimal === null ? parseFloat(`${int.join("")}`) : parseFloat(`${int.join("")}.${decimal[1].join("")}`); }
@@ -71,6 +98,7 @@ Stmt
     = Paint _ ";"
     / Assignment _ ";"
     / Return _ ";"
+    / If _ ";"
   
 Funct
 	= TableTypeDef _ "->" _ Type _ "{"  __ (Stmts __)? "}"
@@ -82,10 +110,13 @@ Paint
 	= "paint" __ Expression
 
 Assignment
-	= "let" __ Identifier _ (":" _ Type _)? "=" _ Expression
+	= Identifier _ (":" _ Type _)? "=" _ Expression
 
 Return
 	= "return" __ Expression
+    
+If
+	= "if" __ Expression _ "{" __ (Stmts __)? "}"
 
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
