@@ -6,47 +6,37 @@ diagrams quickly.
 
 ## Types
 
-- `int`
-- `float`
+- `numba`
 - `funct`
 - `shape`
 - `array`
 - `table`
 - `color`
-- `string`
+- `strin`
+- `zilch`
 
 ## Example Program
 
 ```
-funct rotate { s: shape, angle: float } do
-    paint group {
-        rotate: angle,
+have rotate = {s: shape, angle: numba} -> zilch {
+	paint group {
+    	rotate: angle,
         body: [
-            s,
+        	s,
         ],
     };
-end
-
-shape arrow {
-    src: {x: float, y: float},
-    dst: {x: float, y: float},
-} do
-    paint line {
-        src: src,
-        dst: dst,
+    
+    have x = 5;
+    if x >= 4 {
+    	paint rect {
+        	style: {
+            	fill: #fcf,
+            },
+            onClick: {s: shape, angle: numba} -> zilch {
+            	have x = x + 1;
+            	return zilch;
+            },
+        };
     };
-end
-
-let a = arrow {
-    src: {
-        x: 10.0,
-        y: 12.0,
-    },
-    dst: {
-        x: 100.0,
-        y: 100.0,
-    },
 };
-
-paint a;
 ```
