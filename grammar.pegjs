@@ -1,5 +1,5 @@
 Program
-	= TruthLogicExpr
+	= stmts:Stmts _ { return stmts; }
 
 Table
 	= "{" _ "}" { return {}; }
@@ -85,12 +85,12 @@ Product "product"
     }
 
 ExprAtom "expression atom"
-    = FunctCall
+    = x:Funct { return {type: "funct", value: x}; }
+    / x:FunctCall { return {type: "call", value: x}; }
 	/ x:Color { return {type: "color", value: x}; }
     / x:Number { return {type: "numba", value: x}; }
     / x:String { return {type: "strin", value: x}; }
     / x:Array { return {type: "array", value: x}; }
-    / x:Funct { return {type: "funct", value: x}; }
     / x:Table { return {type: "table", value: x}; }
     / x:Identifier { return {type: "identifier", value: x}; }
     / x:Truth { return {type: "truth", value: x}; }
@@ -127,31 +127,31 @@ EscapeSequence
   / "t"  { return "\t"; }
   
 Stmts
-	= (_ Stmt)*
+	= Stmt|0..,_|
 
 Stmt
-    = Paint _ ";"
-    / Assignment _ ";"
-    / Return _ ";"
-    / If _ ";"
+    = x:Paint _ ";" {return x;}
+    / x:Assignment _ ";" {return x;}
+    / x:Return _ ";" {return x;}
+    / x:If _ ";" {return x;}
   
 Funct
-	= TableTypeDef _ "->" _ Type _ "{"  __ (Stmts __)? "}"
+	= args:TableTypeDef _ "->" _ ret:Type _ "{" _ stmts:Stmts _ "}" {return {args, ret, stmts}; }
 
 FunctCall
-	= Identifier _ Table
+	= id:Identifier _ param:Table { return {id, param} }
     
 Paint
-	= "paint" __ Expression
+	= name:"paint" __ expr:Expression { return {name, expr}; }
 
 Assignment
-	= "have" __ Identifier _ (":" _ Type _)? "=" _ Expression
+	= name:"have" __ id:Identifier _ "=" _ expr:Expression { return {name, id, expr}; }
 
 Return
-	= "return" __ Expression
+	= name:"return" __ expr:Expression { return {name, expr}; }
     
 If
-	= "if" __ Expression _ "{" __ (Stmts __)? "}"
+	= name:"if" __ cond:Expression _ "{" _ stmts:Stmts _ "}" { return {name, cond, stmts}; }
 
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
