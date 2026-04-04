@@ -1,10 +1,35 @@
 class Funct {
-  constructor(args, ast) {
+  constructor(args, ast, context) {
     this.args = args;
     this.ast = ast;
+    this.context = context;
   }
   run() {
-    return ast.run();
+    for (const ast of this.ast) {
+      let ret = ast.run(context);
+      if (ret !== undefined) {
+        context.append(ret);
+      }
+    }
+  }
+}
+
+class Assign {
+  constructor(funct) {
+    this.val = undefined;
+    this.funct = funct;
+    this.run = false;
+  }
+  run() {
+    if (this.run == false) {
+      this.run = true;
+      if (this.funct instanceof Funct) {
+        this.val = this.funct.run();
+      } else {
+        this.val = this.funct;
+      }
+    }
+    return this.val;
   }
 }
 
@@ -12,9 +37,7 @@ class Val {
   constructor(val) {
     this.val = val;
   }
-  run() {
-    return this.val;
-  }
+  run() { return this.val; }
 }
 
 class Color {
@@ -39,6 +62,27 @@ class Group {
     }
     return;
   }
+}
+
+class Array {
+  constructor(array) {
+    this.array = array;
+  }
+  run() {}
+}
+
+class Table {
+  constructor(table) {
+    this.table = table;
+  }
+  run() {}
+}
+
+class Strin {
+  constructor(val) {
+    this.val = val;
+  }
+  run() { return this.val };
 }
 
 class Zilch {
