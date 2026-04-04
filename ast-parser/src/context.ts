@@ -1,6 +1,6 @@
-import "./types.ts"
+import { Varia } from "./types.ts"
 
-class Context {
+export class Context {
     #table!: Map<string, Varia>
     #existingContext!: Context
 

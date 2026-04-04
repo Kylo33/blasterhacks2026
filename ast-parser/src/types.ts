@@ -1,47 +1,47 @@
-class Varia {
-  constructor(val) {
+export class Node {
+  run() {}
+}
+
+export class Varia extends Node {
+  val
+  constructor(val: string | number | void) {
+    super();
     this.val = val;
   }
   run() {
-    return this.val.run();
+    return this.val;
   }
 }
 
-class Funct {
-  constructor(args, ast, context) {
+class Funct extends Node {
+  args
+  stmts
+  constructor(args: Table, stmts: Array<Node>) {
+    super();
     this.args = args;
-    this.ast = ast;
-    this.context = context;
+    this.stmts = stmts;
   }
   run() {
-    for (const ast of this.ast) {
-      let ret = ast.run(context);
-      if (ret !== undefined) {
-        context.append(ret);
-      }
-      if (ast instanceof Return) {
+    for (const stmt of this.stmts) {
+      let ret = stmt.run();
+      if (stmt instanceof Return) {
         return ret;
       }
+      // need to handle if statements here
     }
   }
 }
 
-class Assign {
-  constructor(funct) {
-    this.val = undefined;
-    this.funct = funct;
-    this.run = false;
+class Identifier extends Node {
+  key
+  val
+  constructor(key: string, val: Varia) {
+    super();
+    this.key = key;
+    this.val = val;
   }
-  run() {
-    if (this.run == false) {
-      this.run = true;
-      if (this.funct instanceof Funct) {
-        this.val = this.funct.run();
-      } else {
-        this.val = this.funct;
-      }
-    }
-    return this.val;
+  get() {
+    return this.val.run(); 
   }
 }
 
@@ -53,11 +53,23 @@ class Truth extends Varia {}
 
 class Color extends Varia {}
 
-class Group extends Varia {
-  constructor() {
+class Shape extends Node {
+  x
+  y
+  constructor(x: number, y: number) {
+    super()
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Group extends Shape {
+  shapes: Array<Shape>
+  constructor(x: number, y: number) {
+    super(x, y);
     this.shapes = [];
   }
-  add_shape(shape) {
+  add_shape(shape: Shape) {
     this.shapes.push(shape);
   }
   run() {
@@ -68,23 +80,46 @@ class Group extends Varia {
   }
 }
 
-class Array extends Varia {
-  constructor(array) {
+class Suite<T> extends Varia {
+  array
+  constructor(array: Array<T>) {
+    super();
     this.array = array;
   }
   run() {}
 }
 
-class Table extends Varia {
-  constructor(table) {
+class Access extends Varia {
+  key
+  table
+  constructor(table: Table, key: Strin) {
+    super();
     this.table = table;
+    this.key = key;
   }
-  run() {}
+  run() {
+    let ret = this.table.table.array.find((value) => (value.key == this.key.val));
+    if (ret != undefined) {
+      return ret.val.run();
+    }
+    return undefined;
+  }
 }
 
-class Strin extends Varia {}
+class Table extends Varia {
+  table
+  constructor(table: Suite<Identifier>) {
+    super();
+    this.table = table;
+  }
+  run() { }
+}
+
+class Strin extends Varia {
+  declare val: string;
+}
 
 class Zilch extends Varia {
-  constructor() {}
-  run() {}
+  constructor() { super(0); }
+  run() {null}
 }
