@@ -1,10 +1,27 @@
+import { Numba } from 'types.js'
+
+function is_numba(val) {
+  return (val instanceof Numba);
+}
+
+function is_cmp(val) {
+  return (val instanceof Numba);
+}
+
+
 class Add {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() + this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_numba(a) && is_numba(b)) {
+      return a.val + b.val;
+    } else {
+      throw new Error("Invalid arithmetic type")
+    }
   }
 }
 
@@ -14,7 +31,13 @@ class Sub {
     this.b = b;
   }
   run() {
-    return this.a.run() - this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_numba(a) && is_numba(b)) {
+      return a.val - b.val;
+    } else {
+      throw new Error("Invalid arithmetic type")
+    }
   }
 }
 
@@ -24,7 +47,13 @@ class Mul {
     this.b = b;
   }
   run() {
-    return this.a.run() * this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_numba(a) && is_numba(b)) {
+      return a.val * b.val;
+    } else {
+      throw new Error("Invalid arithmetic type")
+    }
   }
 }
 
@@ -34,67 +63,111 @@ class Div {
     this.b = b;
   }
   run() {
-    return this.a.run() / this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_numba(a) && is_numba(b)) {
+      return a.val / b.val;
+    } else {
+      throw new Error("Invalid arithmetic type")
+    }
   }
 }
 
-class Equ {
+class CmpType {}
+
+class Equ extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() == this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val == b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 
-class Neq {
+class Neq extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() != this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val != b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 
-class Gt {
+class Gt extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() > this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val > b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 
-class Lt {
+class Lt extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() < this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val < b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 
-class Gte {
+class Gte extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() >= this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val>= b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 
-class Lte {
+class Lte extends CmpType {
   constructor(a, b) {
     this.a = a;
     this.b = b;
   }
   run() {
-    return this.a.run() <= this.b.run();
+    const a = this.a.run();
+    const b = this.b.run();
+    if (is_cmp(a) && is_cmp(b)) {
+      return a.val<= b.val;
+    } else {
+      throw new Error("Invalid comparison type")
+    }
   }
 }
 

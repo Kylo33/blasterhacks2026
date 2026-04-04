@@ -10,6 +10,9 @@ class Funct {
       if (ret !== undefined) {
         context.append(ret);
       }
+      if (ast instanceof Return) {
+        return ret;
+      }
     }
   }
 }
@@ -33,7 +36,16 @@ class Assign {
   }
 }
 
-class Val {
+class Return {
+  constructor(val) {
+    this.val = val;
+  }
+  run() {
+    return this.val.run();
+  }
+}
+
+class Numba {
   constructor(val) {
     this.val = val;
   }
