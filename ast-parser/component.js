@@ -12,5 +12,4 @@ class TinyLayout extends HTMLElement {
   }
 }
 
-// Define the new element
 customElements.define("tiny-layout", TinyLayout);
