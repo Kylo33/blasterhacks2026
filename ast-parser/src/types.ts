@@ -49,7 +49,7 @@ class Return extends Varia {}
 
 class Numba extends Varia {}
 
-class Booli extends Varia {}
+class Truth extends Varia {}
 
 class Color extends Varia {}
 
