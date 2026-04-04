@@ -13,7 +13,7 @@ export class Varia extends Node {
   }
 }
 
-class Funct extends Node {
+export class Funct extends Node {
   args
   stmts
   constructor(args: Table, stmts: Array<Node>) {
@@ -45,15 +45,17 @@ class Identifier extends Node {
   }
 }
 
-class Return extends Varia {}
+export class Return extends Varia {}
 
-class Numba extends Varia {}
+export class Numba extends Varia {
+  declare val: number;
+}
 
-class Truth extends Varia {}
+export class Truth extends Varia {}
 
-class Color extends Varia {}
+export class Color extends Varia {}
 
-class Shape extends Node {
+export class Shape extends Node {
   x
   y
   constructor(x: number, y: number) {
@@ -63,7 +65,7 @@ class Shape extends Node {
   }
 }
 
-class Group extends Shape {
+export class Group extends Shape {
   shapes: Array<Shape>
   constructor(x: number, y: number) {
     super(x, y);
@@ -80,7 +82,7 @@ class Group extends Shape {
   }
 }
 
-class Suite<T> extends Varia {
+export class Suite<T> extends Varia {
   array
   constructor(array: Array<T>) {
     super();
@@ -89,7 +91,7 @@ class Suite<T> extends Varia {
   run() {}
 }
 
-class Access extends Varia {
+export class Access extends Varia {
   key
   table
   constructor(table: Table, key: Strin) {
@@ -106,7 +108,7 @@ class Access extends Varia {
   }
 }
 
-class Table extends Varia {
+export class Table extends Varia {
   table
   constructor(table: Suite<Identifier>) {
     super();
@@ -115,11 +117,11 @@ class Table extends Varia {
   run() { }
 }
 
-class Strin extends Varia {
+export class Strin extends Varia {
   declare val: string;
 }
 
-class Zilch extends Varia {
+export class Zilch extends Varia {
   constructor() { super(0); }
   run() {null}
 }

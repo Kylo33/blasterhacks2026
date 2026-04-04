@@ -1,184 +1,121 @@
-import { Numba } from 'types.js'
+import { Numba, Funct } from './types.ts'
 
-function is_numba(val) {
-  return (val instanceof Numba);
-}
-
-function is_cmp(val) {
-  return (val instanceof Numba);
-}
-
-
-class Add {
-  constructor(a, b) {
+class Math {
+  a
+  b
+  constructor(a: Numba, b: Numba) {
     this.a = a;
     this.b = b;
   }
+}
+
+class Add extends Math{
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_numba(a) && is_numba(b)) {
-      return a.val + b.val;
-    } else {
-      throw new Error("Invalid arithmetic type")
+    if (typeof a === 'number' && typeof b === 'number') {
+    return a + b;
     }
   }
 }
 
-class Sub {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
+class Sub extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_numba(a) && is_numba(b)) {
-      return a.val - b.val;
-    } else {
-      throw new Error("Invalid arithmetic type")
+    if (typeof a === 'number' && typeof b === 'number') {
+    return a - b;
     }
   }
 }
 
-class Mul {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
+class Mul extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_numba(a) && is_numba(b)) {
-      return a.val * b.val;
-    } else {
-      throw new Error("Invalid arithmetic type")
+    if (typeof a === 'number' && typeof b === 'number') {
+    return a * b;
     }
   }
 }
 
-class Div {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
+class Div extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_numba(a) && is_numba(b)) {
-      return a.val / b.val;
-    } else {
-      throw new Error("Invalid arithmetic type")
+    if (typeof a === 'number' && typeof b === 'number') {
+    return a / b;
     }
   }
 }
 
-class CmpType {}
+class CmpType {
+  a
+  b
+  constructor(a: Numba, b: Numba) {
+    this.a = a;
+    this.b = b;
+  }
+  run() {return true}
+}
 
 class Equ extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val == b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a == b;
   }
 }
 
 class Neq extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val != b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a != b;
   }
 }
 
 class Gt extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val > b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a > b;
   }
 }
 
 class Lt extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val < b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a < b;
   }
 }
 
 class Gte extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val>= b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a >= b;
   }
 }
 
 class Lte extends CmpType {
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
   run() {
     const a = this.a.run();
     const b = this.b.run();
-    if (is_cmp(a) && is_cmp(b)) {
-      return a.val<= b.val;
-    } else {
-      throw new Error("Invalid comparison type")
-    }
+    return a <= b;
   }
 }
 
 class If {
-  constructor(cmp, funct, context) {
+  cmp
+  funct
+  constructor(cmp: CmpType, funct: Funct) {
     this.cmp = cmp;
     this.funct = funct;
-    this.context = context;
   }
   run() {
-    if (this.cmp.run()) {this.funct.run(this.context)}
+    if (this.cmp.run()) {this.funct.run()}
     return;
   }
 }
