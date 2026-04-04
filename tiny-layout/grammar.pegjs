@@ -30,10 +30,10 @@ Identifier "identifier"
 	= name:[a-zA-Z_]+ { return name.join(''); }
     
 Expression "expression"
-	= TruthLogicExpr
+	= OrExpr
     
-TruthLogicExpr
-	= first:Negation rest:(__ TruthOperator __ Negation)* {
+OrExpr
+	= first:AndExpr rest:(__ "or" __ AndExpr)* {
     	if (!rest.length) return first;
         let ans = first;
         for(let i = 0; i < rest.length; i++) {
@@ -41,11 +41,17 @@ TruthLogicExpr
         }
         return ans;
     }
-
-TruthOperator
-	= "and"
-    / "or"
-
+    
+AndExpr
+	= first:Negation rest:(__ "and" __ Negation)* {
+    	if (!rest.length) return first;
+        let ans = first;
+        for(let i = 0; i < rest.length; i++) {
+        	ans = [rest[i][1], ans, rest[i][3]];
+        }
+        return ans;
+    }
+    
 Negation
 	= "not" __ rest:Comparison { return ["not", rest] }
     / Comparison
@@ -156,4 +162,5 @@ If
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
 __ "mandatory whitespace" = [ \t\n\r]+
+
 

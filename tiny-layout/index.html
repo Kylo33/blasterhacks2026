@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tiny Layout Demo</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+
+<body class="max-w-3xl mx-auto py-8">
+    <header>
+        <h1 class="font-bold text-5xl">Tiny Layout</h1>
+        <p class="mt-4">Renn & Edna</p>
+    </header>
+    <main class="mt-2">
+        <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. At iusto modi, maxime dolorem rem labore iste
+            quam! Exercitationem rerum nisi suscipit reprehenderit hic quibusdam porro sed? Suscipit rerum quasi, natus
+            necessitatibus nemo, fuga explicabo voluptates consequuntur perspiciatis ullam, dignissimos officiis minima
+            tempora temporibus optio eaque adipisci magni ab repellat pariatur.
+        </p>
+        <div class="mt-4 grid grid-cols-2 gap-4 h-100">
+            <div class="border border-black/10 rounded-md"></div>
+            <div class="border border-black/10 rounded-md">
+                <tiny-layout>
+                    have val = 5;
+                    paint circle {
+                        x: val,
+                        y: val,
+                        radius: 140 + 16,
+                    };
+                </tiny-layout>  
+            </div>
+        </div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
