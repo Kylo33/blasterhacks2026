@@ -11,17 +11,25 @@ class Path {
 
     constructor() {
         this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    }
+
+    paint() {
         __svg.appendChild(this.path)
     }
 
     set points(val) {
-        const segments = [];
-        // val is an array of {x, y} points
-        for (const {x, y} of val) {
-            segments.push("M " + x.toString() + " " + y.toString());
+        const ptsArr = [];
+        for(let i = 0; val[i] != undefined; i++) {
+            ptsArr.push(val[i]);
         }
-        const pathString = segments.join(" ");
-        this.path.setAttribute("d", pathString);
+
+        const segments = [];
+        let first = true;
+        for (const {x, y} of ptsArr) {
+            segments.push((first ? "M " : "L ") + x.toString() + " " + y.toString());
+            first = false;
+        }
+        this.path.setAttribute("d", segments.join(" "));
     }
 
     set fill(val) {
@@ -37,15 +45,13 @@ class Path {
     }
 };
 
-let path = ({points}) => {
+let path = ({points, fill = "#000", stroke = "none", strokeWidth = 2}) => {
     const p = new Path();
-    
-    const ptsArr = [];
-    for(let i = 0; points[i] != undefined; i++) {
-        ptsArr.push(points[i]);
-    }
-
-    p.points = ptsArr;
+    p.points = points;
+    p.fill = fill;
+    p.strokeWidth = strokeWidth;
+    p.stroke = stroke;
+    return p;
 };
 `
 
@@ -96,6 +102,8 @@ class TinyLayout extends HTMLElement {
     }
 
     setCode(tinyLayoutCode: string) {
+        tinyLayoutCode = tinyLayoutCode.replace(/\/\/.*(\n|$)/g, "")
+
         this.textContent = tinyLayoutCode;
         let ast;
         try {
@@ -220,6 +228,17 @@ function processAstNode(astNode: any, parts: string[]) {
             break;
         case "tableKey":
             parts.push(astNode["value"])
+            break;
+        case "identifierSeq":
+            for (const id of astNode["value"]) {
+                processAstNode(id, parts)
+                parts.push(".")
+            }
+            parts.pop()
+            break;
+        case "paint":
+            processAstNode(astNode["expr"], parts)
+            parts.push(".paint();")
             break;
     }
 }
