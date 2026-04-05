@@ -25,7 +25,12 @@
         <section class="mt-12">
             <h2 class="text-pine-green text-3xl font-bold font-serif">Demo</h2>
             <div class="grid grid-cols-2 gap-4 mt-4 h-128">
-                <div id="container" class="shadow-md rounded-md border border-gray-200 overflow-hidden"></div>
+                <div class="relative">
+                    <div id="container" class="shadow-md rounded-md border border-gray-200 overflow-hidden h-full"></div>
+                    <select id="example-select"
+                        class="absolute top-2 right-2 z-10 text-xs bg-white/80 backdrop-blur border border-gray-300 rounded-md px-2 py-1 text-gray-700 shadow-sm hover:border-pine-green focus:outline-none focus:ring-1 focus:ring-pine-green cursor-pointer">
+                    </select>
+                </div>
                 <tiny-layout class="shadow-md rounded-md border border-gray-200 overflow-hidden">
             </div>
             </div>

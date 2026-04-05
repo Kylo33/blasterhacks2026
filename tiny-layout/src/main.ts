@@ -2,7 +2,8 @@ import "@fontsource/libre-baskerville";
 import * as monaco from 'monaco-editor';
 import { TinyLayout } from "./tiny.ts"
 
-const defaultCode = `
+const examples: Record<string, string> = {
+    "Kitchen Sink": `
 // path: a triangle (inherits default black fill)
 have tri = path [
         points: [
@@ -76,7 +77,84 @@ paint text [
         fontSize: 24,
         fontFamily: "monospace",
 ];
-`
+`,
+    "Smiley Face": `
+// face
+paint ellipse [
+        center: [x: 150, y: 150],
+        radius: [x: 100, y: 100],
+        fill: "#f1c40f",
+        stroke: "#e67e22",
+        strokeWidth: 3,
+];
+
+// left eye
+paint ellipse [
+        center: [x: 115, y: 120],
+        radius: [x: 12, y: 16],
+        fill: "#2c3e50",
+];
+
+// right eye
+paint ellipse [
+        center: [x: 185, y: 120],
+        radius: [x: 12, y: 16],
+        fill: "#2c3e50",
+];
+
+// smile
+paint curve [
+        points: [
+                0: [x: 100, y: 175],
+                1: [x: 125, y: 210],
+                2: [x: 175, y: 210],
+                3: [x: 200, y: 175],
+        ],
+        fill: "none",
+        stroke: "#2c3e50",
+        strokeWidth: 4,
+];
+`,
+    "Color Wheel": `
+have size = 60;
+
+// overlapping circles
+paint ellipse [
+        center: [x: 150, y: 120],
+        radius: [x: size, y: size],
+        fill: "#e74c3c44",
+        stroke: "#e74c3c",
+        strokeWidth: 2,
+];
+
+paint ellipse [
+        center: [x: 115, y: 180],
+        radius: [x: size, y: size],
+        fill: "#3498db44",
+        stroke: "#3498db",
+        strokeWidth: 2,
+];
+
+paint ellipse [
+        center: [x: 185, y: 180],
+        radius: [x: size, y: size],
+        fill: "#2ecc7144",
+        stroke: "#2ecc71",
+        strokeWidth: 2,
+];
+
+paint text [
+        content: "RGB",
+        position: [x: 125, y: 280],
+        fill: "#333",
+        stroke: "none",
+        fontSize: 28,
+        fontFamily: "monospace",
+];
+`,
+};
+
+const defaultCode = examples["Kitchen Sink"];
 
 const editor = monaco.editor.create(document.getElementById('container')!, {
     value: defaultCode.trim(),
@@ -97,3 +175,16 @@ editor.onDidChangeModelContent(() => {
 const value = editor.getValue();
 const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!
 tinyLayout.setCode(value);
+
+// Populate example dropdown
+const select = document.getElementById('example-select') as HTMLSelectElement;
+for (const name of Object.keys(examples)) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+}
+select.addEventListener('change', () => {
+    const code = examples[select.value].trim();
+    editor.setValue(code);
+});
