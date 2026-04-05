@@ -53,15 +53,20 @@ class Path {
         this.path.setAttribute("stroke-width", val)
     }
 
+    set onClick(func) {
+        this.path.addEventListener("click", func)
+    }
+
     get svgElement() { return this.path; }
 };
 
-let path = ({points, fill, stroke, strokeWidth}) => {
+let path = ({points, fill, stroke, strokeWidth, onClick}) => {
     const p = new Path();
     p.points = points;
     if (fill !== undefined) p.fill = fill;
     if (stroke !== undefined) p.stroke = stroke;
     if (strokeWidth !== undefined) p.strokeWidth = strokeWidth;
+    if (onClick !== undefined) p.onClick = onClick;
     return p;
 };
 
@@ -84,6 +89,10 @@ class Ellipse {
     set radius({x, y}) {
         this.ellipse.setAttribute("rx", x)
         this.ellipse.setAttribute("ry", y)
+    }
+
+    set onClick(func) {
+        this.ellipse.addEventListener("click", func)
     }
 
     /**
@@ -110,13 +119,14 @@ class Ellipse {
     get svgElement() { return this.ellipse; }
 };
 
-let ellipse = ({center, radius, fill, stroke, strokeWidth}) => {
+let ellipse = ({center, radius, fill, stroke, strokeWidth, onClick}) => {
     const e = new Ellipse();
     e.center = center
     e.radius = radius
     if (fill !== undefined) e.fill = fill;
     if (stroke !== undefined) e.stroke = stroke;
     if (strokeWidth !== undefined) e.strokeWidth = strokeWidth;
+    if (onClick !== undefined) e.onClick = onClick;
     return e;
 };
 
@@ -179,19 +189,24 @@ class Curve {
         this.path.setAttribute("stroke-width", val)
     }
 
+    set onClick(func) {
+        this.path.addEventListener("click", func)
+    }
+
     get svgElement() { return this.path; }
 }
 
-let curve = ({points, fill, stroke, strokeWidth}) => {
+let curve = ({points, fill, stroke, strokeWidth, onClick}) => {
     const c = new Curve();
     c.points = points;
     if (fill !== undefined) c.fill = fill;
     if (stroke !== undefined) c.stroke = stroke;
     if (strokeWidth !== undefined) c.strokeWidth = strokeWidth;
+    if (onClick !== undefined) c.onClick = onClick;
     return c;
 };
 
-class G {
+class Group {
     g
 
     constructor() {
@@ -232,6 +247,10 @@ class G {
         this.g.setAttribute("stroke-width", val)
     }
 
+    set onClick(func) {
+        this.g.addEventListener("click", func)
+    }
+
     set rotate({degrees, center}) {
         const cx = center ? center.x : 0;
         const cy = center ? center.y : 0;
@@ -241,12 +260,13 @@ class G {
     get svgElement() { return this.g; }
 }
 
-let g = ({body, fill, stroke, strokeWidth, rotate}) => {
-    const grp = new G();
+let group = ({body, fill, stroke, strokeWidth, rotate, onClick}) => {
+    const grp = new Group();
     if (fill !== undefined) grp.fill = fill;
     if (stroke !== undefined) grp.stroke = stroke;
     if (strokeWidth !== undefined) grp.strokeWidth = strokeWidth;
     if (rotate !== undefined) grp.rotate = rotate;
+    if (onClick !== undefined) grp.onClick = onClick;
     grp.body = body;
     return grp;
 };
@@ -292,6 +312,10 @@ class Text {
         this.text.setAttribute("stroke-width", val)
     }
 
+    set onClick(func) {
+        this.text.addEventListener("click", func)
+    }
+
     /**
      * @param {number} val
      */
@@ -309,7 +333,7 @@ class Text {
     get svgElement() { return this.text; }
 }
 
-let text = ({content, position, fill, stroke, strokeWidth, fontSize, fontFamily}) => {
+let text = ({content, position, fill, stroke, strokeWidth, fontSize, fontFamily, onClick}) => {
     const t = new Text();
     t.content = content;
     t.position = position;
@@ -318,5 +342,6 @@ let text = ({content, position, fill, stroke, strokeWidth, fontSize, fontFamily}
     if (strokeWidth !== undefined) t.strokeWidth = strokeWidth;
     if (fontSize !== undefined) t.fontSize = fontSize;
     if (fontFamily !== undefined) t.fontFamily = fontFamily;
+    if (onClick !== undefined) t.onClick = onClick;
     return t;
 };

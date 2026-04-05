@@ -11,7 +11,7 @@ monaco.languages.setMonarchTokensProvider("tiny-layout", {
         "path",
         "ellipse",
         "curve",
-        "g",
+        "group",
         "text",
         "cos",
         "sin",
@@ -138,7 +138,7 @@ have wave = curve [
 ];
 
 // group: sets stroke/strokeWidth for children, rotated
-paint g [
+paint group [
     body: [0: wave],
     stroke: "#2ecc71",
     strokeWidth: 3,
@@ -147,7 +147,7 @@ paint g [
 ];
 
 // group: override stroke after paint
-have grp = g [
+have grp = group [
     body: [0: tri, 1: box, 2: dot, 3: ring],
 ];
 paint grp;
