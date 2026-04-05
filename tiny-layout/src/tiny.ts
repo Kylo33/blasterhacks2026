@@ -10,7 +10,7 @@ let print = ({text}) => console.log(text);
 class TinyLayout extends HTMLElement {
     #shadow!: ShadowRoot;
     #svg!: SVGElement;
-    #debug!: HTMLSpanElement;
+    #debug!: HTMLDivElement;
     #scriptContainer!: HTMLDivElement;
     #lineContainer!: HTMLParagraphElement;
     #errorContainer!: HTMLParagraphElement;
@@ -23,20 +23,28 @@ class TinyLayout extends HTMLElement {
         this.#shadow = this.attachShadow({ mode: "open" });
         this.#svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.#scriptContainer = document.createElement("div")
+
         this.#lineContainer = document.createElement("p")
         this.#lineContainer.style.display = "inline-block";
         this.#lineContainer.style.margin = "10px";
         this.#lineContainer.style.padding = "2px 6px";
         this.#lineContainer.style.backgroundColor = "#eb3443";
         this.#lineContainer.style.borderRadius = "3px";
+        this.#lineContainer.style.whiteSpace = "nowrap";
+        this.#lineContainer.style.margin = "4px";
+
         this.#errorContainer = document.createElement("p")
-        this.#errorContainer.style.display = "inline-block";
-        this.#errorContainer.style.padding = "10px";
-        this.#debug = document.createElement("span")
+        this.#errorContainer.style.margin = "0px";
+
+        this.#debug = document.createElement("div")
+        this.#debug.style.display = "flex";
+        this.#debug.style.alignItems = "start";
+        this.#debug.style.padding = "10px";
+        this.#debug.style.gap = "10px";
+        this.#debug.appendChild(this.#lineContainer)
+        this.#debug.appendChild(this.#errorContainer)
 
         this.#shadow.appendChild(this.#scriptContainer)
-        this.#shadow.appendChild(this.#lineContainer)
-        this.#shadow.appendChild(this.#errorContainer)
         this.#shadow.appendChild(this.#debug)
         this.#shadow.appendChild(this.#svg)
 
