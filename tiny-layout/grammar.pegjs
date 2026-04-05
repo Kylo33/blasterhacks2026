@@ -27,7 +27,7 @@ Type "type"
     / "truth"
 
 Identifier "identifier"
-	= name:[a-zA-Z_]+ { return name.join(''); }
+	= head:[a-zA-Z_] tail:[a-zA-Z0-9_]* { return head + tail.join(''); }
     
 Expression "expression"
 	= OrExpr

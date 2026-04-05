@@ -4,42 +4,61 @@ import { TinyLayout } from "./tiny.ts"
 
 const defaultCode = `
 // "have" defines a variable.
-have a = 5;
-have b = 10;
+have cx = 150;
+have cy = 100;
 
-
-// paint lets you draw a shape
+// paint draws a shape to the SVG
 paint circle {
-        x: a,
-        y: b,
-        style: {
-                fill: #01796f,
+        x: cx,
+        y: cy,
+        r: 40,
+        style: { fill: #01796f },
+        onClick: {} -> zilch {
+                paint text {
+                        x: 110,
+                        y: 180,
+                        content: "clicked!",
+                        style: {
+                                fill: #333,
+                                fontSize: 14,
+                        },
+                };
         },
 };
-
 
 // functions are values too
 have hat = {fill: color} -> shape {
         return group {
                 body: [
                         rect {
-                                x: 10,
-                                y: 10,
-                                width: 10,
-                                height: 20,
+                                x: 60,
+                                y: 30,
+                                width: 30,
+                                height: 40,
                         },
                         rect {
-                                x: 0,
-                                y: 20,
-                                width: 30,
-                                height: 5,
+                                x: 50,
+                                y: 60,
+                                width: 50,
+                                height: 10,
                         },
                 ],
+                style: { fill: fill },
         };
 };
 
-paint hat {
-        fill: #fc0
+paint hat { fill: #fc0 };
+
+// lines work too
+paint line {
+        x1: 20,
+        y1: 200,
+        x2: 280,
+        y2: 200,
+        style: {
+                stroke: #999,
+                strokeWidth: 2,
+        },
 };
 `
 
@@ -53,8 +72,10 @@ const editor = monaco.editor.create(document.getElementById('container')!, {
 })
 
 editor.getModel()!.updateOptions({ tabSize: 8 });
+
+const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!;
+tinyLayout.setCode(defaultCode.trim());
+
 editor.onDidChangeModelContent(() => {
-    const value = editor.getValue();
-    const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!
-    tinyLayout.setCode(value);
+    tinyLayout.setCode(editor.getValue());
 })
