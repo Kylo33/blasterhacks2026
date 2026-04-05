@@ -170,6 +170,9 @@ function processAstNode(astNode: any, parts: string[]) {
             processAstNode(astNode["expr"], parts)
             parts.push(",")
             break;
+        case "tableKey":
+            parts.push(astNode["value"])
+            break;
     }
 }
 

@@ -38,7 +38,10 @@ Table
     / "[" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "]" { return restDcls.length ? {type: "table", value: [firstDcl, ...restDcls.map(r=>r[3])]} : {type: "table", value: [firstDcl]}; }
 
 TablePairDcl
-	= id:Identifier _ ":" _ expr:Expression { return {type: "tablePairDcl", id, expr}; }
+	= id:TableKey _ ":" _ expr:Expression { return {type: "tablePairDcl", id, expr}; }
+
+TableKey "table key"
+	= chars:[0-9a-zA-Z]+ { return {type: "tableKey", value: chars.join("")}; }
 
 // --- EXPRESSIONS ---
 
