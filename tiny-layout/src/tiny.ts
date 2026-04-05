@@ -5,6 +5,48 @@ let cos = ({x}) => Math.cos(x);
 let sin = ({x}) => Math.sin(x);
 let tan = ({x}) => Math.tan(x);
 let print = ({text}) => console.log(text);
+
+class Path {
+    path
+
+    constructor() {
+        this.path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        __svg.appendChild(this.path)
+    }
+
+    set points(val) {
+        const segments = [];
+        // val is an array of {x, y} points
+        for (const {x, y} of val) {
+            segments.push("M " + x.toString() + " " + y.toString());
+        }
+        const pathString = segments.join(" ");
+        this.path.setAttribute("d", pathString);
+    }
+
+    set fill(val) {
+        this.path.setAttribute("fill", val)
+    }
+
+    set stroke(val) {
+        this.path.setAttribute("stroke", val)
+    }
+
+    set strokeWidth(val) {
+        this.path.setAttribute("stroke-width", val)
+    }
+};
+
+let path = ({points}) => {
+    const p = new Path();
+    
+    const ptsArr = [];
+    for(let i = 0; points[i] != undefined; i++) {
+        ptsArr.push(points[i]);
+    }
+
+    p.points = ptsArr;
+};
 `
 
 class TinyLayout extends HTMLElement {
@@ -67,14 +109,20 @@ class TinyLayout extends HTMLElement {
             }
             return;
         }
+        this.#svg.replaceChildren();
         this.#debug.style.display = "none";
         const parts: string[] = [];
         processAstNode(ast, parts)
 
         const script: HTMLScriptElement = document.createElement("script")
 
+        const svgRef = `__tinySvg_${Math.random().toString(36).slice(2)}`;
+        (globalThis as any)[svgRef] = this.#svg;
+
         script.textContent = `
         (() => {
+            const __svg = globalThis["${svgRef}"];
+            delete globalThis["${svgRef}"];
             ${prelude}
             ${parts.join(' ')}
         })()
@@ -159,7 +207,7 @@ function processAstNode(astNode: any, parts: string[]) {
             break;
         case "table":
             parts.push("{")
-            for(const decl of astNode["value"]) {
+            for (const decl of astNode["value"]) {
                 processAstNode(decl, parts)
             }
             parts.push("}")
