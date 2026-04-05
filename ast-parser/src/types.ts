@@ -21,7 +21,7 @@ export class Funct extends Node {
     this.args = args;
     this.stmts = stmts;
   }
-  run(args: Table) {
+  run() {
     for (const stmt of this.stmts) {
       let ret = stmt.run();
       if (stmt instanceof Return) {

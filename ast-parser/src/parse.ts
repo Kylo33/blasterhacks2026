@@ -1,7 +1,15 @@
-import { Varia, Identifier } from './types.ts'
-import './ops.ts'
+import { Node, Varia, Identifier } from './types.ts'
+import { IfStatementi, Equ, Neq, Gt, Lt, Gte, Lte, CmpType } from './ops.ts'
 import './shapes.ts'
 import { Context } from './context.ts'
+
+const cmp_map = Record<string, CmpType>;
+cmp_map["=="] = Equ;
+cmp_map["!="] = Neq;
+cmp_map[">"] = Gt;
+cmp_map["<"] = Lt;
+cmp_map[">="] = Gte;
+cmp_map["<="] = Lte;
 
 function parse_dict(ast: Record<string, any>, context: Context): Node {
   if (ast['name'] != undefined) {
@@ -9,6 +17,10 @@ function parse_dict(ast: Record<string, any>, context: Context): Node {
       let content = parse_dict(ast['expr'], context);
       let identifier = new Identifier (ast['id'], content);
       return identifier
+    }
+    if (ast['name'] == 'if') {
+      
+      let statement = new IfStatement ()
     }
   }
 }

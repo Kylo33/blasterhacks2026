@@ -1,3 +1,4 @@
+import type { isAssertEntry } from 'typescript';
 import { Numba, Funct } from './types.ts'
 
 class Math {
@@ -9,7 +10,7 @@ class Math {
   }
 }
 
-class Add extends Math{
+export class Add extends Math{
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -19,7 +20,7 @@ class Add extends Math{
   }
 }
 
-class Sub extends Math {
+export class Sub extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -29,7 +30,7 @@ class Sub extends Math {
   }
 }
 
-class Mul extends Math {
+export class Mul extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -39,7 +40,7 @@ class Mul extends Math {
   }
 }
 
-class Div extends Math {
+export class Div extends Math {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -49,7 +50,7 @@ class Div extends Math {
   }
 }
 
-class CmpType {
+export class CmpType {
   a
   b
   constructor(a: Numba, b: Numba) {
@@ -59,7 +60,7 @@ class CmpType {
   run() {return true}
 }
 
-class Equ extends CmpType {
+export class Equ extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -67,7 +68,7 @@ class Equ extends CmpType {
   }
 }
 
-class Neq extends CmpType {
+export class Neq extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -75,7 +76,7 @@ class Neq extends CmpType {
   }
 }
 
-class Gt extends CmpType {
+export class Gt extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -83,7 +84,7 @@ class Gt extends CmpType {
   }
 }
 
-class Lt extends CmpType {
+export class Lt extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -91,7 +92,7 @@ class Lt extends CmpType {
   }
 }
 
-class Gte extends CmpType {
+export class Gte extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -99,7 +100,7 @@ class Gte extends CmpType {
   }
 }
 
-class Lte extends CmpType {
+export class Lte extends CmpType {
   run() {
     const a = this.a.run();
     const b = this.b.run();
@@ -107,7 +108,7 @@ class Lte extends CmpType {
   }
 }
 
-class If {
+export class IfStatement {
   cmp
   funct
   constructor(cmp: CmpType, funct: Funct) {
