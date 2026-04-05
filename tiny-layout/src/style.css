@@ -1,6 +1,8 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --font-serif: "Libre Baskerville", sans-serif; 
+  --font-mono: "Fira Code", monospace; 
   --color-pine-green: #01796F;
 }
