@@ -21,7 +21,7 @@ export class Funct extends Node {
     this.args = args;
     this.stmts = stmts;
   }
-  run() {
+  run(args: Table) {
     for (const stmt of this.stmts) {
       let ret = stmt.run();
       if (stmt instanceof Return) {
@@ -32,16 +32,29 @@ export class Funct extends Node {
   }
 }
 
-class Identifier extends Node {
+export class Identifier extends Node {
   key
   val
-  constructor(key: string, val: Varia) {
+  constructor(key: string, val: Node) {
     super();
     this.key = key;
     this.val = val;
   }
   get() {
     return this.val.run(); 
+  }
+}
+
+export class Call extends Node {
+  funct
+  args
+  constructor(funct: Funct, args: Table) {
+    super();
+    this.funct = funct;
+    this.args = args;
+  }
+  run() {
+    this.funct.run();
   }
 }
 
@@ -103,8 +116,9 @@ export class Access extends Varia {
     let ret = this.table.table.array.find((value) => (value.key == this.key.val));
     if (ret != undefined) {
       return ret.val.run();
+    } else {
+      throw new Error("Value not found");
     }
-    return undefined;
   }
 }
 
