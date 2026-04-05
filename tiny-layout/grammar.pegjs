@@ -1,34 +1,43 @@
 Program
-	= _ stmts:Stmts _ { return stmts; }
+	= stmts:Stmts
 
-Table
-	= "{" _ "}" { return {}; }
-    / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[3]))} : firstDcl; }
+Stmts
+	= stmts:(_ Stmt _)|0..,_| { return {type: "stmts", value: stmts.map(s=>s[1])}; }
 
-TablePairDcl
-	= id:Identifier _ ":" _ expr:Expression { let tab = {}; tab[id] = expr; return tab; }
+Stmt
+    = x:Paint _ ";" {return x;}
+    / x:Assignment _ ";" {return x;}
+    / x:Return _ ";" {return x;}
+    / x:If _ ";" {return x;}
 
-TableTypeDef
-	= "{" _ "}" { return {}; }
-    / "{" _ firstDcl:TableTypePairDcl _ restDcls:("," _ TableTypePairDcl _)* ","?  _ "}" { return restDcls.length ? { ...firstDcl, ...Object.assign(...restDcls.map(dcl => dcl[2]))} : firstDcl; }
+// --- STATEMENTS ---
 
-TableTypePairDcl
-	= id:Identifier _ ":" _ type:Type {let tab = {}; tab[id] = type; return tab; }
-    
-Type "type"
-	= "color"
-    / "numba"
-    / "array"
-    / "table"
-    / "funct"
-    / "shape"
-    / "strin"
-    / "zilch"
-    / "truth"
+Paint
+	= "paint" __ expr:Expression { return {type: "paint", expr}; }
+
+Assignment
+	= "have" __ id:Identifier _ "=" _ expr:Expression {return {type: "have", id, expr}; }
+
+Return
+	= "return" expr:(__ Expression)? { return !expr ? {type: "return"} : {type: "return", expr: expr[1]}; }
+
+If
+	= "if" __ expr:Expression _ "{" _ stmts:Stmts _ "}" {return {type: "if", expr, stmts};}
 
 Identifier "identifier"
-	= name:[a-zA-Z_]+ { return name.join(''); }
-    
+	= name:[a-zA-Z_]+ { return {type: "identifier", value: name.join('')}; }
+
+// --- TABLES ---
+
+Table
+	= "{" _ "}" { return {type: "table", value: {}}; }
+    / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? {type: "table", value: [firstDcl, ...restDcls.map(r=>r[3])]} : {type: "table", value: [firstDcl]}; }
+
+TablePairDcl
+	= id:Identifier _ ":" _ expr:Expression { return {type: "tablePairDcl", id, expr}; }
+
+// --- EXPRESSIONS ---
+
 Expression "expression"
 	= OrExpr
     
@@ -39,7 +48,8 @@ OrExpr
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return ans;
+        
+        return {type: "infix", operator: "||", values: ans.slice(1)};
     }
     
 AndExpr
@@ -49,17 +59,17 @@ AndExpr
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return ans;
+        return {type: "infix", operator: "&&", values: ans.slice(1)};
     }
     
 Negation
-	= "not" __ rest:Comparison { return ["not", rest] }
+	= "not" __ value:Comparison { return {type: "negation", value}; }
     / Comparison
     
 Comparison
 	= first:Sum rest:(_ CmpOperator _ Sum)? {
     	if (!rest) return first;
-        return [rest[1], first, rest[3]];
+        return {type: "infix", operator: rest[1], values: [first, rest[3]]};
     }
 
 CmpOperator
@@ -77,7 +87,7 @@ Sum "sum"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return {type: "sum", value: ans};
+        return {type: "operation", operator: ans[0], values: ans.slice(1)};
     }
 
 Product "product"
@@ -87,43 +97,34 @@ Product "product"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return {type: "product", value: ans};
+        return {type: "operation", operator: ans[0], values: ans.slice(1)};
     }
 
 ExprAtom "expression atom"
-    = x:Funct { return {type: "funct", value: x}; }
-    / x:FunctCall { return {type: "call", value: x}; }
-	/ x:Color { return {type: "color", value: x}; }
-    / x:Number { return {type: "numba", value: x}; }
-    / x:String { return {type: "strin", value: x}; }
-    / x:Array { return {type: "array", value: x}; }
-    / x:Table { return {type: "table", value: x}; }
-    / x:Truth { return {type: "truth", value: x}; }
-    / "(" _ expr: Expression _ ")" { return expr; }
-    / "zilch" {return {type: "zilch", value: "zilch"}}
-    / x:Identifier { return {type: "identifier", value: x}; }
+    = Funct
+    / FunctCall
+    / Number
+    / String
+    / Table
+    / Truth
+    / "(" _ expr:Expression _ ")" {return expr;}
+    / Identifier
 
-Color
-	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
-	/ "#" color:HexDigit|3| { return `#${color[0]}${color[0]}${color[1]}${color[1]}${color[2]}${color[2]}`; }
+// --- PRIMATIVES/LITERALS ---
 
 Truth
-	= "true" {return true;}
-    / "false" {return false;}
+	= "true" {return {type: "truth", value: true};}
+    / "false" {return {type: "truth", value: false};}
 
 Number
-	= int:[0-9] + decimal:("." [0-9]+)? { return decimal === null ? parseFloat(`${int.join("")}`) : parseFloat(`${int.join("")}.${decimal[1].join("")}`); }
+	= int:[0-9] + decimal:("." [0-9]+)? { return {type: "number", value: decimal === null ? parseFloat(`${int.join("")}`) : parseFloat(`${int.join("")}.${decimal[1].join("")}`)}; }
 
 String
-	= '"' chars:Character* '"' { return chars.join(""); }
+	= '"' chars:Character* '"' { return {type: "string", value: chars.join("")}; }
 
 Character
 	= '\\' esc:EscapeSequence { return esc; }
     / [^"]
-
-Array
-	= "[" _ "]" { return []; }
-	/ "[" _ firstExpr:Expression restExprs:(_ "," _ Expression _)* ","? _ "]" { return [firstExpr, ...restExprs.map(expr => expr[3])]; }
 
 EscapeSequence
   = '"'  { return '"'; }
@@ -131,49 +132,19 @@ EscapeSequence
   / "n"  { return "\n"; }
   / "r"  { return "\r"; }
   / "t"  { return "\t"; }
-  
-Stmts
-	= stmts:StmtOption|0..,_| { return {"type": "stmts", value: stmts.filter(item => item != undefined)}; }
 
-StmtOption
-	= Stmt
-    / Comment
+// --- FUNCTIONS ---
 
-Comment
-	= _ "//" [^\n]* EndLine { return undefined; }
-    
-EndLine
-	= "\n"
-    / !.
-
-Stmt
-    = x:Paint _ ";" {return {type: "stmt", value: x};}
-    / x:Assignment _ ";" {return {type: "stmt", value: x};}
-    / x:Return _ ";" {return {type: "stmt", value: x};}
-    / x:If _ ";" {return {type: "stmt", value: x};}
-  
 Funct
-	= args:TableTypeDef _ "->" _ ret:Type _ "{" _ stmts:Stmts _ "}" {return {args, ret, stmts}; }
+	= args:Args _ "{" _ stmts:Stmts _ "}" { return {type: "function", args, stmts}; }
+
+Args
+    = "|" _ "|" { return {type: "args", value: []}; }
+    / "|" _ first:Identifier _ rest:(_ "," _ Identifier _)* ","?  _ "|" { return {type: "args", value: [first, ...rest.map(r=>r[3])]}; }
 
 FunctCall
-	= id:Identifier _ param:Table { return {id, param} }
-    
-Paint
-	= name:"paint" __ expr:Expression { return {name, expr}; }
+	= id:Identifier _ args:Table { return {type: "call", id, args} }
 
-Assignment
-	= name:"have" __ id:Identifier _ "=" _ expr:Expression { return {name, id, expr}; }
-
-Return
-	= name:"return" __ expr:Expression { return {name, expr}; }
-    
-If
-	= name:"if" __ cond:Expression _ "{" _ stmts:Stmts _ "}" { return {name, cond, stmts}; }
-
-HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
 __ "mandatory whitespace" = [ \t\n\r]+
-
-
-
 
