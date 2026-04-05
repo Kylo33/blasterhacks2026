@@ -6,6 +6,7 @@ Stmts
 
 Stmt
     = x:Paint _ ";" {return x;}
+    / x:Declaration _ ";" {return x;}
     / x:Assignment _ ";" {return x;}
     / x:Return _ ";" {return x;}
     / x:If _ ";" {return x;}
@@ -15,8 +16,11 @@ Stmt
 Paint
 	= "paint" __ expr:Expression { return {type: "paint", expr}; }
 
-Assignment
+Declaration
 	= "have" __ id:Identifier _ "=" _ expr:Expression {return {type: "have", id, expr}; }
+
+Assignment
+	= id:Identifier _ "=" _ expr:Expression {return {type: "assign", id, expr}; };
 
 Return
 	= "return" expr:(__ Expression)? { return !expr ? {type: "return"} : {type: "return", expr: expr[1]}; }
@@ -30,8 +34,8 @@ Identifier "identifier"
 // --- TABLES ---
 
 Table
-	= "{" _ "}" { return {type: "table", value: {}}; }
-    / "{" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "}" { return restDcls.length ? {type: "table", value: [firstDcl, ...restDcls.map(r=>r[3])]} : {type: "table", value: [firstDcl]}; }
+	= "[" _ "]" { return {type: "table", value: {}}; }
+    / "[" _ firstDcl:TablePairDcl _ restDcls:(_ "," _ TablePairDcl _)* ","?  _ "]" { return restDcls.length ? {type: "table", value: [firstDcl, ...restDcls.map(r=>r[3])]} : {type: "table", value: [firstDcl]}; }
 
 TablePairDcl
 	= id:Identifier _ ":" _ expr:Expression { return {type: "tablePairDcl", id, expr}; }
@@ -87,7 +91,7 @@ Sum "sum"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return {type: "operation", operator: ans[0], values: ans.slice(1)};
+        return {type: "infix", operator: ans[0], values: ans.slice(1)};
     }
 
 Product "product"
@@ -97,7 +101,7 @@ Product "product"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return {type: "operation", operator: ans[0], values: ans.slice(1)};
+        return {type: "infix", operator: ans[0], values: ans.slice(1)};
     }
 
 ExprAtom "expression atom"

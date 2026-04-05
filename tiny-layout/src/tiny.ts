@@ -19,7 +19,7 @@ class TinyLayout extends HTMLElement {
         this.#shadow.appendChild(this.#svg)
         this.#shadow.appendChild(this.#script)
         this.#shadow.appendChild(this.#debug)
-        
+
         this.setCode(this.textContent ?? "")
     }
 
@@ -29,37 +29,93 @@ class TinyLayout extends HTMLElement {
         console.log(ast)
         const parts: string[] = [];
         processAstNode(ast, parts)
-        console.log(parts.join("\n"))
+        console.log(parts.join(" "))
     }
 }
 
 function processAstNode(astNode: any, parts: string[]) {
     switch (astNode["type"]) {
         case "stmts":
-            for(const stmt of astNode["value"]) {
-                processAstNode(stmt, parts);
+            for (const child of astNode["value"]) {
+                processAstNode(child, parts)
             }
             break;
-        case "stmt":
-            switch (astNode["value"]["name"]) {
-                case "have":
-                    // TODO: allow re-assigning variables
-                    switch (astNode["value"]["expr"]["type"]) {
-                        case "numba":
-                        case "truth":
-                        case "identifier":
-                            parts.push(`let ${astNode["value"]["id"]} = ${astNode["value"]["expr"]["value"]};`)
-                            break;
-                        case "strin":
-                        case "color":
-                            parts.push(`let ${astNode["value"]["id"]} = "${astNode["value"]["expr"]["value"]}";`)
-                            break;
-                        case "zilch":
-                            parts.push(`let ${astNode["value"]["id"]} = undefined;`)
-                            break;
-                    }
-                    break;
+        case "infix":
+            processAstNode(astNode["values"][0], parts);
+            parts.push(astNode["operator"])
+            processAstNode(astNode["values"][1], parts);
+            break;
+        case "have":
+            parts.push("let")
+            processAstNode(astNode["id"], parts)
+            parts.push("=")
+            processAstNode(astNode["expr"], parts)
+            parts.push(";")
+            break;
+        case "assign":
+            processAstNode(astNode["id"], parts)
+            parts.push("=")
+            processAstNode(astNode["expr"], parts)
+            parts.push(";")
+            break;
+        case "return":
+            parts.push("return")
+            if (astNode["expr"]) {
+                processAstNode(astNode["expr"], parts)
             }
+            parts.push(";")
+            break;
+        case "if":
+            parts.push("if (")
+            processAstNode(astNode["expr"], parts)
+            parts.push(") {")
+            processAstNode(astNode["stmts"], parts)
+            parts.push("}")
+            break;
+        case "negation":
+            parts.push("!")
+            processAstNode(astNode["value"], parts)
+            break
+        case "number":
+        case "truth":
+            parts.push(astNode["value"].toString())
+            break;
+        case "string":
+            parts.push(`"${astNode['value']}"`)
+            break;
+        case "call":
+            parts.push(`${astNode['id']}(${astNode['args']})`)
+            break;
+        case "function":
+            parts.push("({")
+            processAstNode(astNode["args"], parts)
+            parts.push("}) => {")
+
+            processAstNode(astNode["stmts"], parts)
+            parts.push("}")
+            break;
+        case "args":
+            for (const arg of astNode["value"]) {
+                processAstNode(arg, parts)
+                parts.push(",")
+            }
+            break;
+        case "identifier":
+            parts.push(astNode["value"])
+            break;
+        case "table":
+            parts.push("{")
+            for(const decl of astNode["value"]) {
+                processAstNode(decl, parts)
+            }
+            parts.push("}")
+            break;
+        case "tablePairDcl":
+            processAstNode(astNode["id"], parts)
+            parts.push(":")
+            processAstNode(astNode["expr"], parts)
+            parts.push(",")
+            break;
     }
 }
 
