@@ -77,7 +77,7 @@ Sum "sum"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return ans;
+        return {type: "sum", value: ans};
     }
 
 Product "product"
@@ -87,7 +87,7 @@ Product "product"
         for(let i = 0; i < rest.length; i++) {
         	ans = [rest[i][1], ans, rest[i][3]];
         }
-        return ans;
+        return {type: "product", value: ans};
     }
 
 ExprAtom "expression atom"
@@ -98,10 +98,10 @@ ExprAtom "expression atom"
     / x:String { return {type: "strin", value: x}; }
     / x:Array { return {type: "array", value: x}; }
     / x:Table { return {type: "table", value: x}; }
-    / x:Identifier { return {type: "identifier", value: x}; }
     / x:Truth { return {type: "truth", value: x}; }
     / "(" _ expr: Expression _ ")" { return expr; }
     / "zilch" {return {type: "zilch", value: "zilch"}}
+    / x:Identifier { return {type: "identifier", value: x}; }
 
 Color
 	= "#" color:HexDigit|6| { return `#${color.join('')}`; }
@@ -133,7 +133,7 @@ EscapeSequence
   / "t"  { return "\t"; }
   
 Stmts
-	= stmts:StmtOption|0..,_| { return stmts.filter(item => item != undefined); }
+	= stmts:StmtOption|0..,_| { return {"type": "stmts", value: stmts.filter(item => item != undefined)}; }
 
 StmtOption
 	= Stmt
@@ -147,10 +147,10 @@ EndLine
     / !.
 
 Stmt
-    = x:Paint _ ";" {return x;}
-    / x:Assignment _ ";" {return x;}
-    / x:Return _ ";" {return x;}
-    / x:If _ ";" {return x;}
+    = x:Paint _ ";" {return {type: "stmt", value: x};}
+    / x:Assignment _ ";" {return {type: "stmt", value: x};}
+    / x:Return _ ";" {return {type: "stmt", value: x};}
+    / x:If _ ";" {return {type: "stmt", value: x};}
   
 Funct
 	= args:TableTypeDef _ "->" _ ret:Type _ "{" _ stmts:Stmts _ "}" {return {args, ret, stmts}; }
@@ -173,6 +173,7 @@ If
 HexDigit = [0-9a-fA-F]
 _ "whitespace" = [ \t\n\r]*
 __ "mandatory whitespace" = [ \t\n\r]+
+
 
 
 

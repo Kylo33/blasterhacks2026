@@ -1,5 +1,6 @@
 import "@fontsource/libre-baskerville";
 import * as monaco from 'monaco-editor';
+import { TinyLayout } from "./tiny.ts"
 
 const defaultCode = `
 // "have" defines a variable.
@@ -12,7 +13,6 @@ paint circle {
         x: a,
         y: b,
         style: {
-                // Colors are types too!
                 fill: #01796f,
         },
 };
@@ -38,8 +38,8 @@ have hat = {fill: color} -> shape {
         };
 };
 
-draw hat {
-        fill: #fc0;
+paint hat {
+        fill: #fc0
 };
 `
 
@@ -53,3 +53,8 @@ const editor = monaco.editor.create(document.getElementById('container')!, {
 })
 
 editor.getModel()!.updateOptions({ tabSize: 8 });
+editor.onDidChangeModelContent(() => {
+    const value = editor.getValue();
+    const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!
+    tinyLayout.setCode(value);
+})
