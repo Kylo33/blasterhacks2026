@@ -250,3 +250,73 @@ let g = ({body, fill, stroke, strokeWidth, rotate}) => {
     grp.body = body;
     return grp;
 };
+
+class Text {
+    text
+
+    constructor() {
+        this.text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    }
+
+    paint() {
+        __svg.appendChild(this.text)
+    }
+
+    set content(val) {
+        this.text.textContent = val;
+    }
+
+    set position({x, y}) {
+        this.text.setAttribute("x", x)
+        this.text.setAttribute("y", y)
+    }
+
+    /**
+     * @param {string} val
+     */
+    set fill(val) {
+        this.text.setAttribute("fill", val)
+    }
+
+    /**
+     * @param {string} val
+     */
+    set stroke(val) {
+        this.text.setAttribute("stroke", val)
+    }
+
+    /**
+     * @param {number} val
+     */
+    set strokeWidth(val) {
+        this.text.setAttribute("stroke-width", val)
+    }
+
+    /**
+     * @param {number} val
+     */
+    set fontSize(val) {
+        this.text.setAttribute("font-size", val)
+    }
+
+    /**
+     * @param {string} val
+     */
+    set fontFamily(val) {
+        this.text.setAttribute("font-family", val)
+    }
+
+    get svgElement() { return this.text; }
+}
+
+let text = ({content, position, fill, stroke, strokeWidth, fontSize, fontFamily}) => {
+    const t = new Text();
+    t.content = content;
+    t.position = position;
+    if (fill !== undefined) t.fill = fill;
+    if (stroke !== undefined) t.stroke = stroke;
+    if (strokeWidth !== undefined) t.strokeWidth = strokeWidth;
+    if (fontSize !== undefined) t.fontSize = fontSize;
+    if (fontFamily !== undefined) t.fontFamily = fontFamily;
+    return t;
+};

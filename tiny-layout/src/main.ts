@@ -66,6 +66,16 @@ have grp = g [
 ];
 paint grp;
 grp->fill = "#f39c12";
+
+// text
+paint text [
+        content: "hello tiny",
+        position: [x: 120, y: 260],
+        fill: "#e74c3c",
+        stroke: "none",
+        fontSize: 24,
+        fontFamily: "monospace",
+];
 `
 
 const editor = monaco.editor.create(document.getElementById('container')!, {
