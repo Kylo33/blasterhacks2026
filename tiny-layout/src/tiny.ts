@@ -37,9 +37,16 @@ class TinyLayout extends HTMLElement {
         this.#debug.style.alignItems = "start";
         this.#debug.style.padding = "10px";
         this.#debug.style.gap = "10px";
+        this.#debug.style.backgroundColor = "#ffffffcc"
+        this.#debug.style.position = "absolute"
+        this.#debug.style.left = "0";
+        this.#debug.style.right = "0";
+        this.#debug.style.top = "0";
         this.#debug.appendChild(this.#lineContainer)
         this.#debug.appendChild(this.#errorContainer)
 
+        this.style.position = "relative";
+        this.style.display = "block";
         this.#shadow.appendChild(this.#scriptContainer)
         this.#shadow.appendChild(this.#debug)
         this.#shadow.appendChild(this.#svg)
