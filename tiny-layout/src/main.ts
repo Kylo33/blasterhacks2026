@@ -1,6 +1,90 @@
 import "@fontsource/libre-baskerville";
-import * as monaco from 'monaco-editor';
-import { TinyLayout } from "./tiny.ts"
+import * as monaco from "monaco-editor";
+import { TinyLayout } from "./tiny.ts";
+
+monaco.languages.register({ id: "tiny-layout" });
+
+monaco.languages.setMonarchTokensProvider("tiny-layout", {
+    keywords: ["paint", "have", "return", "if", "not", "and", "or"],
+    builtins: [
+        "path",
+        "ellipse",
+        "curve",
+        "g",
+        "text",
+        "cos",
+        "sin",
+        "tan",
+        "print",
+    ],
+    booleans: ["true", "false"],
+    operators: [">=", "<=", "==", "!=", ">", "<", "+", "-", "*", "/", "=", "->"],
+
+    tokenizer: {
+        root: [
+            // Comments
+            [/\/\/.*$/, "comment"],
+
+            // Strings
+            [/"/, "string", "@string"],
+
+            // Numbers
+            [/\d+(\.\d+)?/, "number"],
+
+            // Identifiers and keywords
+            [
+                /[a-zA-Z_]+/,
+                {
+                    cases: {
+                        "@keywords": "keyword",
+                        "@builtins": "type.identifier",
+                        "@booleans": "keyword",
+                        "@default": "identifier",
+                    },
+                },
+            ],
+
+            // Operators
+            [/->|>=|<=|==|!=|[+\-*/<>=]/, "operator"],
+
+            // Delimiters
+            [/[{}()\[\]]/, "@brackets"],
+            [/[;,:|]/, "delimiter"],
+
+            // Whitespace
+            [/\s+/, "white"],
+        ],
+
+        string: [
+            [/\\./, "string.escape"],
+            [/"/, "string", "@pop"],
+            [/[^"\\]+/, "string"],
+        ],
+    },
+});
+
+monaco.languages.setLanguageConfiguration("tiny-layout", {
+    comments: { lineComment: "//" },
+    brackets: [
+        ["{", "}"],
+        ["[", "]"],
+        ["(", ")"],
+        ["|", "|"],
+    ],
+    autoClosingPairs: [
+        { open: "{", close: "}" },
+        { open: "[", close: "]" },
+        { open: "(", close: ")" },
+        { open: '"', close: '"' },
+        { open: "|", close: "|" },
+    ],
+    surroundingPairs: [
+        { open: "{", close: "}" },
+        { open: "[", close: "]" },
+        { open: "(", close: ")" },
+        { open: '"', close: '"' },
+    ],
+});
 
 const examples: Record<string, string> = {
     "Kitchen Sink": `
@@ -156,35 +240,36 @@ paint text [
 
 const defaultCode = examples["Kitchen Sink"];
 
-const editor = monaco.editor.create(document.getElementById('container')!, {
+const editor = monaco.editor.create(document.getElementById("container")!, {
     value: defaultCode.trim(),
-    theme: 'vs-light',
+    language: "tiny-layout",
+    theme: "vs-light",
     minimap: { enabled: false },
     tabSize: 8,
     insertSpaces: true,
     padding: { top: 16, bottom: 16 },
-})
+});
 
 editor.getModel()!.updateOptions({ tabSize: 8 });
 editor.onDidChangeModelContent(() => {
     const value = editor.getValue();
-    const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!
+    const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!;
     tinyLayout.setCode(value);
-})
+});
 
 const value = editor.getValue();
-const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!
+const tinyLayout: TinyLayout = document.querySelector("tiny-layout")!;
 tinyLayout.setCode(value);
 
 // Populate example dropdown
-const select = document.getElementById('example-select') as HTMLSelectElement;
+const select = document.getElementById("example-select") as HTMLSelectElement;
 for (const name of Object.keys(examples)) {
-    const opt = document.createElement('option');
+    const opt = document.createElement("option");
     opt.value = name;
     opt.textContent = name;
     select.appendChild(opt);
 }
-select.addEventListener('change', () => {
+select.addEventListener("change", () => {
     const code = examples[select.value].trim();
     editor.setValue(code);
 });
