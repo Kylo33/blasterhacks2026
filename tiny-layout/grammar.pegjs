@@ -17,10 +17,10 @@ Paint
 	= "paint" __ expr:Expression { return {type: "paint", expr}; }
 
 Declaration
-	= "have" __ id:Identifier _ "=" _ expr:Expression {return {type: "have", id, expr}; }
+	= "have" __ id:IdentifierSeq _ "=" _ expr:Expression {return {type: "have", id, expr}; }
 
 Assignment
-	= id:Identifier _ "=" _ expr:Expression {return {type: "assign", id, expr}; };
+	= id:IdentifierSeq _ "=" _ expr:Expression {return {type: "assign", id, expr}; };
 
 Return
 	= "return" expr:(__ Expression)? { return !expr ? {type: "return"} : {type: "return", expr: expr[1]}; }
@@ -28,6 +28,10 @@ Return
 If
 	= "if" __ expr:Expression _ "{" _ stmts:Stmts _ "}" {return {type: "if", expr, stmts};}
 
+    
+IdentifierSeq "identifier sequence"
+    = value:Identifier|0..,"->"| { return {type: "identifierSeq", value}; }
+    
 Identifier "identifier"
 	= name:[a-zA-Z_]+ { return {type: "identifier", value: name.join('')}; }
 
@@ -115,7 +119,7 @@ ExprAtom "expression atom"
     / Table
     / Truth
     / "(" _ expr:Expression _ ")" {return expr;}
-    / Identifier
+    / IdentifierSeq
 
 // --- PRIMATIVES/LITERALS ---
 
