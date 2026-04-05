@@ -22,6 +22,8 @@ class TinyLayout extends HTMLElement {
     connectedCallback() {
         this.#shadow = this.attachShadow({ mode: "open" });
         this.#svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.#svg.style.width = "100%";
+        this.#svg.style.height = "100%";
         this.#scriptContainer = document.createElement("div")
 
         this.#lineContainer = document.createElement("p")
@@ -57,6 +59,7 @@ class TinyLayout extends HTMLElement {
         try {
             ast = parse(tinyLayoutCode);
         } catch (error: unknown) {
+            this.#debug.style.display = "flex";
             console.error("got error parsing")
             if (error instanceof SyntaxError) {
                 this.#lineContainer.textContent = "Line " + error.location.start.line + ":" + error.location.start.column + " ";
@@ -64,8 +67,7 @@ class TinyLayout extends HTMLElement {
             }
             return;
         }
-        this.#errorContainer.textContent = "";
-        console.log(ast)
+        this.#debug.style.display = "none";
         const parts: string[] = [];
         processAstNode(ast, parts)
 
