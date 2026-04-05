@@ -1,4 +1,4 @@
-import { parse } from "./parser.js";
+import { parse, SyntaxError } from "./parser.js";
 
 const prelude = `
 let cos = ({x}) => Math.cos(x);
@@ -12,6 +12,8 @@ class TinyLayout extends HTMLElement {
     #svg!: SVGElement;
     #debug!: HTMLSpanElement;
     #scriptContainer!: HTMLDivElement;
+    #lineContainer!: HTMLParagraphElement;
+    #errorContainer!: HTMLParagraphElement;
 
     constructor() {
         super();
@@ -21,11 +23,22 @@ class TinyLayout extends HTMLElement {
         this.#shadow = this.attachShadow({ mode: "open" });
         this.#svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.#scriptContainer = document.createElement("div")
+        this.#lineContainer = document.createElement("p")
+        this.#lineContainer.style.display = "inline-block";
+        this.#lineContainer.style.margin = "10px";
+        this.#lineContainer.style.padding = "2px 6px";
+        this.#lineContainer.style.backgroundColor = "#eb3443";
+        this.#lineContainer.style.borderRadius = "3px";
+        this.#errorContainer = document.createElement("p")
+        this.#errorContainer.style.display = "inline-block";
+        this.#errorContainer.style.padding = "10px";
         this.#debug = document.createElement("span")
 
-        this.#shadow.appendChild(this.#svg)
         this.#shadow.appendChild(this.#scriptContainer)
+        this.#shadow.appendChild(this.#lineContainer)
+        this.#shadow.appendChild(this.#errorContainer)
         this.#shadow.appendChild(this.#debug)
+        this.#shadow.appendChild(this.#svg)
 
         this.setCode(this.textContent ?? "")
     }
@@ -35,10 +48,15 @@ class TinyLayout extends HTMLElement {
         let ast;
         try {
             ast = parse(tinyLayoutCode);
-        } catch {
+        } catch (error: unknown) {
             console.error("got error parsing")
+            if (error instanceof SyntaxError) {
+                this.#lineContainer.textContent = "Line " + error.location.start.line + ":" + error.location.start.column + " ";
+                this.#errorContainer.textContent = error.message;
+            }
             return;
         }
+        this.#errorContainer.textContent = "";
         console.log(ast)
         const parts: string[] = [];
         processAstNode(ast, parts)
