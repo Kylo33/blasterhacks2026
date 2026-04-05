@@ -1,10 +1,17 @@
 import { parse } from "./parser.js";
 
+const prelude = `
+let cos = ({x}) => Math.cos(x);
+let sin = ({x}) => Math.sin(x);
+let tan = ({x}) => Math.tan(x);
+let print = ({text}) => console.log(text);
+`
+
 class TinyLayout extends HTMLElement {
     #shadow!: ShadowRoot;
     #svg!: SVGElement;
     #debug!: HTMLSpanElement;
-    #script!: HTMLScriptElement;
+    #scriptContainer!: HTMLDivElement;
 
     constructor() {
         super();
@@ -13,23 +20,39 @@ class TinyLayout extends HTMLElement {
     connectedCallback() {
         this.#shadow = this.attachShadow({ mode: "open" });
         this.#svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        this.#script = document.createElement("script")
+        this.#scriptContainer = document.createElement("div")
         this.#debug = document.createElement("span")
 
         this.#shadow.appendChild(this.#svg)
-        this.#shadow.appendChild(this.#script)
+        this.#shadow.appendChild(this.#scriptContainer)
         this.#shadow.appendChild(this.#debug)
 
         this.setCode(this.textContent ?? "")
     }
 
-    setCode(code: string) {
-        this.textContent = code;
-        const ast = parse(code);
+    setCode(tinyLayoutCode: string) {
+        this.textContent = tinyLayoutCode;
+        let ast;
+        try {
+            ast = parse(tinyLayoutCode);
+        } catch {
+            console.error("got error parsing")
+            return;
+        }
         console.log(ast)
         const parts: string[] = [];
         processAstNode(ast, parts)
-        console.log(parts.join(" "))
+
+        const script: HTMLScriptElement = document.createElement("script")
+
+        script.textContent = `
+        (() => {
+            ${prelude}
+            ${parts.join(' ')}
+        })()
+        `
+
+        this.#scriptContainer.replaceChildren(script);
     }
 }
 
@@ -84,7 +107,10 @@ function processAstNode(astNode: any, parts: string[]) {
             parts.push(`"${astNode['value']}"`)
             break;
         case "call":
-            parts.push(`${astNode['id']}(${astNode['args']})`)
+            processAstNode(astNode["id"], parts)
+            parts.push("(")
+            processAstNode(astNode["args"], parts)
+            parts.push(")")
             break;
         case "function":
             parts.push("({")
