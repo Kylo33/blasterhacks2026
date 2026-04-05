@@ -77,6 +77,9 @@ class TinyLayout extends HTMLElement {
         (() => {
             const __svg = globalThis["${svgRef}"];
             delete globalThis["${svgRef}"];
+            __svg.setAttribute("fill", "none");
+            __svg.setAttribute("stroke", "#000");
+            __svg.setAttribute("stroke-width", "2");
             ${prelude}
             ${parts.join(' ')}
         })()

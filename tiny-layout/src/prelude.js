@@ -52,14 +52,16 @@ class Path {
     set strokeWidth(val) {
         this.path.setAttribute("stroke-width", val)
     }
+
+    get svgElement() { return this.path; }
 };
 
-let path = ({points, fill = "#000", stroke = "none", strokeWidth = 2}) => {
+let path = ({points, fill, stroke, strokeWidth}) => {
     const p = new Path();
     p.points = points;
-    p.fill = fill;
-    p.strokeWidth = strokeWidth;
-    p.stroke = stroke;
+    if (fill !== undefined) p.fill = fill;
+    if (stroke !== undefined) p.stroke = stroke;
+    if (strokeWidth !== undefined) p.strokeWidth = strokeWidth;
     return p;
 };
 
@@ -104,15 +106,17 @@ class Ellipse {
     set strokeWidth(val) {
         this.ellipse.setAttribute("stroke-width", val)
     }
+
+    get svgElement() { return this.ellipse; }
 };
 
-let ellipse = ({center, radius, fill = "#000", stroke = "none", strokeWidth = 2}) => {
+let ellipse = ({center, radius, fill, stroke, strokeWidth}) => {
     const e = new Ellipse();
     e.center = center
     e.radius = radius
-    e.fill = fill
-    e.stroke = stroke
-    e.strokeWidth = strokeWidth
+    if (fill !== undefined) e.fill = fill;
+    if (stroke !== undefined) e.stroke = stroke;
+    if (strokeWidth !== undefined) e.strokeWidth = strokeWidth;
     return e;
 };
 
@@ -174,13 +178,75 @@ class Curve {
     set strokeWidth(val) {
         this.path.setAttribute("stroke-width", val)
     }
+
+    get svgElement() { return this.path; }
 }
 
-let curve = ({points, fill = "none", stroke = "#000", strokeWidth = 2}) => {
+let curve = ({points, fill, stroke, strokeWidth}) => {
     const c = new Curve();
     c.points = points;
-    c.fill = fill;
-    c.stroke = stroke;
-    c.strokeWidth = strokeWidth;
+    if (fill !== undefined) c.fill = fill;
+    if (stroke !== undefined) c.stroke = stroke;
+    if (strokeWidth !== undefined) c.strokeWidth = strokeWidth;
     return c;
+};
+
+class G {
+    g
+
+    constructor() {
+        this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    }
+
+    paint() {
+        __svg.appendChild(this.g)
+    }
+
+    /**
+     * @param {any[]} val
+     */
+    set body(val) {
+        for (let i = 0; val[i] != undefined; i++) {
+            this.g.appendChild(val[i].svgElement);
+        }
+    }
+
+    /**
+     * @param {string} val
+     */
+    set fill(val) {
+        this.g.setAttribute("fill", val)
+    }
+
+    /**
+     * @param {string} val
+     */
+    set stroke(val) {
+        this.g.setAttribute("stroke", val)
+    }
+
+    /**
+     * @param {number} val
+     */
+    set strokeWidth(val) {
+        this.g.setAttribute("stroke-width", val)
+    }
+
+    set rotate({degrees, center}) {
+        const cx = center ? center.x : 0;
+        const cy = center ? center.y : 0;
+        this.g.setAttribute("transform", "rotate(" + degrees + ", " + cx + ", " + cy + ")")
+    }
+
+    get svgElement() { return this.g; }
+}
+
+let g = ({body, fill, stroke, strokeWidth, rotate}) => {
+    const grp = new G();
+    if (fill !== undefined) grp.fill = fill;
+    if (stroke !== undefined) grp.stroke = stroke;
+    if (strokeWidth !== undefined) grp.strokeWidth = strokeWidth;
+    if (rotate !== undefined) grp.rotate = rotate;
+    grp.body = body;
+    return grp;
 };
