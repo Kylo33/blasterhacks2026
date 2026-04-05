@@ -53,6 +53,50 @@ let path = ({points, fill = "#000", stroke = "none", strokeWidth = 2}) => {
     p.stroke = stroke;
     return p;
 };
+
+class Ellipse {
+    ellipse
+
+    constructor() {
+        this.ellipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+    }
+
+    paint() {
+        __svg.appendChild(this.ellipse)
+    }
+
+    set center({x, y}) {
+        this.ellipse.setAttribute("cx", x)
+        this.ellipse.setAttribute("cy", y)
+    }
+
+    set radius({x, y}) {
+        this.ellipse.setAttribute("rx", x)
+        this.ellipse.setAttribute("ry", y)
+    }
+
+    set fill(val) {
+        this.ellipse.setAttribute("fill", val)
+    }
+
+    set stroke(val) {
+        this.ellipse.setAttribute("stroke", val)
+    }
+
+    set strokeWidth(val) {
+        this.ellipse.setAttribute("stroke-width", val)
+    }
+};
+
+let ellipse = ({center, radius, fill = "#000", stroke = "none", strokeWidth = 2}) => {
+    const e = new Ellipse();
+    e.center = center
+    e.radius = radius
+    e.fill = fill
+    e.stroke = stroke
+    e.strokeWidth = strokeWidth
+    return e;
+};
 `
 
 class TinyLayout extends HTMLElement {
